@@ -64,7 +64,7 @@ from ast import Load, Store, Del, Name, Call, Tuple, BinOp, MatMult, BitAnd, Bit
 from ast import RShift, Starred, Lambda, AnnAssign, Set, Str, Subscript, Index, IfExp
 from ast import Num, Yield, YieldFrom, FunctionDef, Attribute, Constant, Assign, Expr
 from ast import Return, Raise, If, UnaryOp, Not, ClassDef, Nonlocal, Global, Compare, Is, Try
-from ast import Break, Continue, AsyncFunctionDef, Pass, While, List
+from ast import Break, Continue, AsyncFunctionDef, Pass, While, List, Dict
 
 from scenic.core.distributions import Samplable, RejectionException, needsSampling, toDistribution
 from scenic.core.lazy_eval import needsLazyEvaluation
@@ -2203,9 +2203,12 @@ class ASTSurgeon(NodeTransformer):
 	def transformScenicClass(self, node):
 		"""Process property defaults for Scenic classes."""
 		newBody = []
+		props = {}
+		propSpot = 0
 		for child in node.body:
 			child = self.visit(child)
 			if isinstance(child, AnnAssign):	# default value for property
+				propSpot = len(newBody)
 				origValue = child.annotation
 				target = child.target
 				# extract any attributes for this property
@@ -2237,11 +2240,15 @@ class ASTSurgeon(NodeTransformer):
 				]
 				value = Call(Name(createDefault, Load()), args, [])
 				copy_location(value, origValue)
-				newChild = AnnAssign(
-					target=target, annotation=value,
-					value=None, simple=True)
-				child = copy_location(newChild, child)
-			newBody.append(child)
+				props[target.id] = value
+			else:
+				newBody.append(child)
+		storeProps = Assign(
+		    targets=[ast.Name(id='_scenic_properties', ctx=Store())],
+		    value=Dict(keys=[Constant(value=name) for name in props.keys()],
+		               values=list(props.values()))
+		)
+		newBody.insert(propSpot, storeProps)
 		node.body = newBody
 		return node
 
