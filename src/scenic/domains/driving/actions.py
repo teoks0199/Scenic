@@ -60,7 +60,7 @@ class SetSpeedAction(Action):
 class SteeringAction(Action):
 	"""Abstract class for actions usable by agents which can steer.
 
-	Such agents must implement the `Steers` protocol.
+	Such agents must implement the :obj:`Steers` protocol.
 	"""
 	def canBeTakenBy(self, agent):
 		return isinstance(agent, _model.Steers)
@@ -183,7 +183,7 @@ class RegulatedControlAction(SteeringAction):
 class WalkingAction(Action):
 	"""Abstract class for actions usable by agents which can walk.
 
-	Such agents must implement the `Walks` protocol.
+	Such agents must implement the :obj:`Walks` protocol.
 	"""
 	def canBeTakenBy(self, agent):
 		return isinstance(agent, _model.Walks)

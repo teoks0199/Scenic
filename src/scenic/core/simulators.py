@@ -683,7 +683,7 @@ class Action:
         actions which directly call CARLA APIs, while the generic steering and braking
         actions from `scenic.domains.driving.actions` are implemented using the batching
         approach (see for example the ``setThrottle`` method of the class
-        `scenic.simulators.carla.model.Vehicle`, which sets state later read by
+        :obj:`scenic.simulators.carla.model.Vehicle`, which sets state later read by
         ``CarlaSimulation.executeActions`` in `scenic.simulators.carla.simulator`).
         """
         raise NotImplementedError
