@@ -205,6 +205,7 @@ class CarlaSimulation(DrivingSimulation):
         loc = utils.scenicToCarlaLocation(
             obj.position, world=self.world, blueprint=obj.blueprint
         )
+        print("IN:", obj.orientation)
         rot = utils.scenicToCarlaRotation(obj.orientation)
         transform = carla.Transform(loc, rot)
 
@@ -219,6 +220,7 @@ class CarlaSimulation(DrivingSimulation):
         if carlaActor is None:
             raise SimulationCreationError(f"Unable to spawn object {obj}")
         obj.carlaActor = carlaActor
+
 
         carlaActor.set_simulate_physics(obj.physics)
 
@@ -280,6 +282,7 @@ class CarlaSimulation(DrivingSimulation):
         angularSpeed = utils.carlaToScenicAngularSpeed(currAngVel)
         angularVelocity = utils.carlaToScenicAngularVel(currAngVel)
         globalOrientation = utils.carlaToScenicOrientation(currRot)
+        print("OUT:", globalOrientation)
         yaw, pitch, roll = obj.parentOrientation.localAnglesFor(globalOrientation)
         elevation = utils.carlaToScenicElevation(currLoc)
 

@@ -33,10 +33,13 @@ def scenicToCarlaLocation(pos, z=None, world=None, blueprint=None):
 
 
 def scenicToCarlaRotation(orientation):
-    pitch, yaw, roll = orientation.r.as_euler("XZY", degrees=True)
-    yaw = -yaw - 90
+    # Account for Carla considering left handed X axis forwards
+    orientation *= Orientation.fromEuler(math.pi/2, 0, 0)
+    # Convert to extrinsic angles and degrees
+    pitch, yaw, roll = orientation.r.as_euler("yzx", degrees=True)
+    # Left handed rotations for certain axes
+    pitch, yaw, roll = -pitch, yaw, -roll
     return carla.Rotation(pitch=pitch, yaw=yaw, roll=roll)
-
 
 def scenicSpeedToCarlaVelocity(speed, heading):
     currYaw = scenicToCarlaRotation(heading).yaw
@@ -54,11 +57,16 @@ def carlaToScenicElevation(loc):
 
 
 def carlaToScenicOrientation(rot):
-    angles = (rot.pitch, -rot.yaw - 90, rot.roll)
-    r = scipy.spatial.transform.Rotation.from_euler(
-        seq="XZY", angles=angles, degrees=True
-    )
-    return Orientation(r)
+    # Convert to intrinsic angles and radians
+    carla_orientation = Orientation(scipy.spatial.transform.Rotation.from_euler(
+        seq="yzx", angles=(rot.pitch, rot.yaw, rot.roll), degrees=True
+    ))
+    # Align forwards with y axis
+    carla_orientation *= Orientation.fromEuler(math.pi/2, 0, 0)
+    # Extract intrinsic angles and adjust
+    yaw, pitch, roll = carla_orientation.eulerAngles
+    yaw, pitch, roll = -yaw, -pitch, roll
+    return Orientation.fromEuler(yaw, pitch, roll)
 
 
 def carlaToScenicHeading(rot):
@@ -88,3 +96,6 @@ def scenicToCarlaTrafficLightStatus(status):
 
 def carlaToScenicTrafficLightStatus(status):
     return str(status).lower()
+
+
+
