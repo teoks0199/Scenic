@@ -198,7 +198,7 @@ class BeamNGSimulation(DrivingSimulation):
         """
         try:
             vehicle = Vehicle(obj.vid, obj.model)
-            self.scenario.add_vehicle(vehicle, pos=(-700, 90, 118), rot_quat=(0, 0, 0.3826834, 0.9238795))
+            self.scenario.add_vehicle(vehicle, pos=obj.pos, rot_quat=obj.rot_quat)
             print("Added vehicle to scenario")
         except Exception as e:
             raise SimulationCreationError(f"Failed to spawn object {obj} in simulator") from e

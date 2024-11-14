@@ -11,20 +11,17 @@ try:
 except Error as e:
     raise Error("Failed to initialize BeamNG simulator") from e
 
-# class BeamNGObject:
-#     """
-#     Instance variables are assigned with the colon
-#     like in Python dataclasses, whereas class variables
-#     are assigned with '='
-#     """
-#     id: None
-#     name: None
-#     type: None
-#     pos: None
-#     rot: None
-#     scale: None
-#     opts: None
-#     children: None
-class Car:
+class BeamNGObject:
+    pos: None
+    rot_quat: None
+    
+class Vehicle(BeamNGObject):
     vid: None
-    model: 'etk800'
+    model: None
+
+class ScenarioObject(BeamNGObject):
+    oid: None
+    name: None
+    otype: None
+    scale: None
+    options: None
