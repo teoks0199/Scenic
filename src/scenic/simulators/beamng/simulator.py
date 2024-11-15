@@ -101,10 +101,13 @@ class BeamNGSimulator(DrivingSimulator):
         self.bng.settings.set_steps_per_second(1 / self.timestep)
         self.bng.scenario.load(self.scenario)
         self.bng.scenario.start()
+        self.scenario_number = 0  # Number of the scenario executed
         
     def createSimulation(self, scene, timestep, **kwargs):
         print("Creating BeamNG simulation in simulator")
-        return BeamNGSimulation(scene, self.bng, self.scenario, self.timestep, **kwargs)
+        self.scenario_number += 1
+        return BeamNGSimulation(scene, self.bng, self.scenario, self.scenario_number, timestep=self.timestep, **kwargs)
+
         
     def destroy(self):
         """
@@ -153,15 +156,14 @@ class BeamNGSimulation(DrivingSimulation):
     See the Simulation class in scenic.core.simulator for more details
     """
 
-    def __init__(self, scene, bng: BeamNGpy, scenario: Scenario, timestep, **kwargs):
+    def __init__(self, scene, bng: BeamNGpy, scenario: Scenario, scenario_number, **kwargs):
         print("Creating BeamNG simulation")
 
         self.bng = bng
         self.scenario = scenario
-        self.timestep = timestep
+        self.scenario_number = scenario_number
 
-        super().__init__(scene, timestep=self.timestep, **kwargs)
-
+        super().__init__(scene, **kwargs)
 
     def setup(self):
         super().setup()  # Calls createObjectInSimulator for each object
@@ -198,7 +200,10 @@ class BeamNGSimulation(DrivingSimulation):
         """
         try:
             vehicle = Vehicle(obj.vid, obj.model)
-            self.scenario.add_vehicle(vehicle, pos=obj.pos, rot_quat=obj.rot_quat)
+            p = utils.scenicToBeamNGVector(obj.position)
+            p = (obj.pos)
+            print("spawned vehicle at", p)
+            self.scenario.add_vehicle(vehicle, pos=p)
             print("Added vehicle to scenario")
         except Exception as e:
             raise SimulationCreationError(f"Failed to spawn object {obj} in simulator") from e
@@ -251,6 +256,7 @@ class BeamNGSimulation(DrivingSimulation):
         """
         Args:
         obj (Object): Scenic object in question.
+
         properties (set): Set of names of properties to read from the simulator.
         It is safe to destructively iterate through the set if you want.
         Returns:
@@ -323,20 +329,26 @@ class BeamNGSimulation(DrivingSimulation):
         """
         
         self.scenario.update()
-        print("vid", obj.vid)
+        #print("vid", obj.vid)
         vehicle = self.scenario.get_vehicle(obj.vid)
-
+        imu = AdvancedIMU(f'imu_{obj.vid}', self.bng, vehicle, gfx_update_time=self.timestep, 
+                          is_send_immediately=True)
+        poll = imu.poll()
+        #print(poll)
+        
+        if poll:
+            angularVelocity = utils.beamNGToScenicVector(poll['angVel'])
+            angularSpeed = math.hypot(*angularVelocity)
+        else:
+            angularVelocity = Vector(0, 0, 0)
+            angularSpeed = 0
         position = utils.beamNGToScenicVector(vehicle.state['pos'])
         direction = vehicle.state['dir']
         up = vehicle.state['up']
         velocity = utils.beamNGToScenicVector(vehicle.state['vel'])
         speed = math.hypot(*velocity)
-        qx, qy, qz, qw = vehicle.state['rotation']
 
-        yaw = math.atan2(2.0 * (qw * qz + qx * qy), 1.0 - 2.0 * (qy * qy + qz * qz))
-        sinp = 2.0 * (qw * qy - qz * qx)
-        pitch = math.copysign(math.pi / 2, sinp) if abs(sinp) >= 1 else math.asin(sinp)
-        roll = math.atan2(2.0 * (qw * qx + qy * qz), 1.0 - 2.0 * (qx * qx + qy * qy))
+        yaw, pitch, roll = utils.quaternion_to_euler(vehicle.state['rotation'])
 
         values = dict(
                     position=position,
@@ -345,11 +357,14 @@ class BeamNGSimulation(DrivingSimulation):
                     roll=roll,
                     velocity=velocity,
                     speed=speed,
-                    angularSpeed=0,
-                    angularVelocity=Vector(0, 0, 0),
+                    angularSpeed=angularSpeed,
+                    angularVelocity=angularVelocity,
                 )
-
+        
         return values
+
+
+
 
 
     def destroy(self):
