@@ -4,7 +4,7 @@
 try:
     from scenic.simulators.beamng.simulator import BeamNGSimulator
     from scenic.simulators.beamng.behaviors import *
-    from scenic.simulators.carla.actions import *
+    from scenic.simulators.beamng.actions import *
 except ImportError as e:
     raise ImportError("To use the BeamNG simulator, please install the 'scenic' package with the 'beamng' extra") from e
 
@@ -24,4 +24,6 @@ class BeamNGObject: # ScenarioObject in BeamNG
     
 class Vehicle(BeamNGObject):
     vid: None
-    model: None    
+    model: None
+    color: None
+    license: None

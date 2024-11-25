@@ -5,4 +5,8 @@ except ModuleNotFoundError:
 
 behavior AutopilotBehavior():
     """Behavior causing a vehicle to use BeamNG's built-in autopilot."""
-    take SetAutopilotAction(True)
+    take AISetAutopilotAction()
+
+behavior RandomBehavior():
+    """Drive from random points to random points on the map."""
+    take AISetRandomAction()

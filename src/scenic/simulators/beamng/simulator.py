@@ -91,7 +91,7 @@ class BeamNGSimulator(DrivingSimulator):
                 raise RuntimeError(f"BeamNG could not load scenario {scenario_name} from '{scenario_path}'") from e
         else:
             scenario = Scenario(level=scenario_level, name=scenario_name) # arbitrary scenario
-            ego = Vehicle("ego", model="etk800", color="White", license="initial_car")
+            ego = Vehicle("initial", model="etk800", color="White", license="initial_car")
             scenario.add_vehicle(
                 ego, pos=(-717, 101, 118), rot_quat=(0.0010, 0.1242, 0.9884, -0.0872)
             )
@@ -199,7 +199,7 @@ class BeamNGSimulation(DrivingSimulation):
                         raise SimulationCreationError("spawn objec failed")
         """
         try:
-            vehicle = Vehicle(obj.vid, obj.model)
+            vehicle = Vehicle(obj.vid, obj.model, license=obj.vid)
             p = utils.scenicToBeamNGVector(obj.position)
             p = (obj.pos)
             print("spawned vehicle at", p)
