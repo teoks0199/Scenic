@@ -99,7 +99,7 @@ class BeamNGSimulator(DrivingSimulator):
             self.scenario = scenario
         self.timestep = timestep
         self.bng.settings.set_steps_per_second(1 / self.timestep)
-        self.bng.scenario.load(self.scenario)
+        self.bng.scenario.load(self.scenario, connect_player_vehicle=False)
         self.bng.scenario.start()
         self.scenario_number = 0  # Number of the scenario executed
         

@@ -16,6 +16,164 @@ except ImportError as e:
 import scenic.simulators.beamng.utils.utils as utils
 from scenic.core.simulators import * # imports the Action superclass
 
+class SetThrottleAction(Action):
+    """Set the throttle.
+
+    Arguments:
+        throttle: Throttle value between 0 and 1.
+    """
+
+    def __init__(self, throttle: float):
+        if not 0.0 <= throttle <= 1.0:
+            raise RuntimeError("Throttle must be a float in range [0.0, 1.0].")
+        self.throttle = throttle
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.control(throttle=self.throttle)
+
+class SetSteerAction(Action):
+    """Set the steering 'angle'.
+
+    Arguments:
+        steer: Steering 'angle' between -1 and 1.
+    """
+
+    def __init__(self, steer: float):
+        if not -1.0 <= steer <= 1.0:
+            raise RuntimeError("Steer must be a float in range [-1.0, 1.0].")
+        self.steer = steer
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.control(steering=self.steering)
+
+class SetBrakeAction(Action):
+    """Set the amount of brake.
+
+    Arguments:
+        brake: Amount of braking between 0 and 1.
+    """
+
+    def __init__(self, brake: float):
+        if not 0.0 <= brake <= 1.0:
+            raise RuntimeError("Brake must be a float in range [0.0, 1.0].")
+        self.brake = brake
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.control(brake=self.brake)
+
+class SetHandBrakeAction(Action):
+    """Set or release the hand brake.
+
+    Arguments:
+        handBrake: Whether or not the hand brake is set.
+    """
+
+    def __init__(self, handBrake: bool):
+        if not isinstance(handBrake, bool):
+            raise RuntimeError("Hand brake must be a boolean.")
+        self.handbrake = handBrake
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        if self.handbrake:
+            vehicle.control(handbrake=1)
+        else:
+            vehicle.control(handbrake=0)
+
+class SetReverseAction(Action):
+    """Engage or release reverse gear.
+
+    Arguments:
+        reverse: Whether or not the car is in reverse.
+    """
+
+    def __init__(self, reverse: bool):
+        if not isinstance(reverse, bool):
+            raise RuntimeError("Reverse must be a boolean.")
+        self.reverse = reverse
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        if self.reverse:
+            vehicle.control(gear=-1)
+        else:
+            vehicle.control(gear=1)
+
+class SetGearAction(Action):
+    """Set the gear of a vehicle to shift to."""
+    def __init__(self, gear):
+        if not isinstance(gear, int):
+            raise RuntimeError("Gear must be an int.")
+        self.gear = gear # -1 eq backwards, 0 eq neutral, 1 to X eq nth gear
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.control(gear=self.gear)
+
+class SetVelocityAction(Action):
+    """Set the velocity of a vehicle."""
+
+    def __init__(self, vel: float, dt: float = 1.0):
+        self.velocity = vel
+        self.dt = dt # default dt is suitable up to 30 m/s
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.set_velocity(self.velocity, self.dt)
+
+class SetPositionAction(Action):
+    """Teleport an vehicle to the given position."""
+
+    def __init__(self, pos: Vector, yaw: float = None, pitch: float = None, roll: float = None):
+        self.pos = pos
+        self.yaw = yaw
+        self.pitch = pitch
+        self.roll = roll
+
+    def applyTo(self, obj, sim):
+        vechicle = sim.scenario.get_vehicle(obj.vid)
+        pos = utils.scenicToBeamNGVector(self.pos)
+        if self.yaw and self.pitch and self.roll:
+            rot_quat = utils.euler_to_quaternion(self.yaw, self.pitch, self.roll)
+            vechicle.teleport(pos, rot_quat)
+        else:
+            vechicle.teleport(pos)
+
+class SetManualGearShiftAction(Action):
+    def __init__(self, manualGearShift):
+        if not isinstance(manualGearShift, bool):
+            raise RuntimeError("Manual gear shift must be a boolean.")
+        self.manualGearShift = manualGearShift
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        if self.manualGearShift:
+            vehicle.set_shift_mode('realistic_manual')
+
+class SetShiftModeAction(Action):
+    def __init__(self, mode):
+        if mode not in ['realistic_manual', 'realistic_manual_auto_clutch', 'arcade', 'realistic_automatic']:
+            raise RuntimeError("Shifting mode must be 'realistic_manual', 'realistic_manual_auto_clutch', 'arcade', or 'realistic_automatic'.")
+        self.mode = mode
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.set_shift_mode(self.mode)
+
+class SetClutchAction(Action):
+    """Set the level of the clutch of a vehicle."""
+    def __init__(self, clutch):
+        if not isinstance(clutch, float):
+            raise RuntimeError("Clutch must be a float.")
+        self.clutch = clutch # from 0.0 to 1.0
+
+    def applyTo(self, obj, sim):
+        vehicle = sim.scenario.get_vehicle(obj.vid)
+        vehicle.control(clutch=self.clutch)
+
 class AISetAutopilotAction(Action):
     """Drive along the entire road network of the map
     """
