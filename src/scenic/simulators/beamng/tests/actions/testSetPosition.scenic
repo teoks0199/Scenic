@@ -3,8 +3,7 @@ model scenic.simulators.beamng.model
 behavior SetPositionBehavior(pos=(-600, 50, 118)):
     take SetPositionAction(pos)
 
-spot = new OrientedPoint at (-717, 111, 118)
-ego = new Vehicle, #at spot,
+ego = new Vehicle,
     with vid 'new',
     with model 'etk800',
     with pos (-717, 111, 118),

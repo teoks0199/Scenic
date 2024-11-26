@@ -79,9 +79,9 @@ class SetHandBrakeAction(Action):
     def applyTo(self, obj, sim):
         vehicle = sim.scenario.get_vehicle(obj.vid)
         if self.handbrake:
-            vehicle.control(handbrake=1)
+            vehicle.control(parkingbrake=1)
         else:
-            vehicle.control(handbrake=0)
+            vehicle.control(parkingbrake=0)
 
 class SetReverseAction(Action):
     """Engage or release reverse gear.

@@ -1,13 +1,20 @@
 model scenic.simulators.beamng.model
 
 behavior SetGearBehavior(gear=3):
-    take SetGearAction(gear)
+    delay = 30
+    last_stop = simulation().currentTime
 
-spot = new OrientedPoint at (-717, 111, 118)
-ego = new Vehicle, #at spot,
+    while True:
+        try:
+            do AutopilotBehavior()
+        interrupt when simulation().currentTime - last_stop > delay:
+            print(f"Setting gear to {gear}")
+            take SetGearAction(gear)
+            break
+
+ego = new Vehicle,
     with vid 'new',
     with model 'etk800',
     with pos (-717, 111, 118),
     with rot_quat (0, 0, 0.3826834, 0.9238795),
-    with behavior AutopilotBehavior(),
     with behavior SetGearBehavior(3)
