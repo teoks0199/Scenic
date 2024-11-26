@@ -1,12 +1,12 @@
 model scenic.simulators.beamng.model
 
 behavior TurnRightBehavior():
-    delay = 30
+    delay = 10
     last_stop = simulation().currentTime
 
     while True:
         try:
-            do AutopilotBehavior()
+            do ConstantThrottleBehavior(0.5)
         interrupt when simulation().currentTime - last_stop > delay:
             print("Turning right")
             do TurnRightBehavior()

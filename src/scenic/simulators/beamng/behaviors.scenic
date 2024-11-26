@@ -15,6 +15,10 @@ behavior ConstantThrottleBehavior(x):
     while True:
         take SetThrottleAction(x), SetReverseAction(False), SetHandBrakeAction(False)
 
+behavior ConstantBrakeBehavior(x):
+    while True:
+        take SetBrakeAction(x), SetReverseAction(False), SetHandBrakeAction(False)
+
 behavior AccelerateForwardBehavior():
     take SetReverseAction(False), SetHandBrakeAction(False), SetThrottleAction(0.5)
 

@@ -1,12 +1,12 @@
 model scenic.simulators.beamng.model
 
 behavior SetHandBrakeBehavior():
-    delay = 30
+    delay = 10
     last_stop = simulation().currentTime
 
     while True:
         try:
-            do AutopilotBehavior()
+            do ConstantThrottleBehavior()
         interrupt when simulation().currentTime - last_stop > delay:
             print("Activating Handbrake")
             take SetHandBrakeAction(1.0)
