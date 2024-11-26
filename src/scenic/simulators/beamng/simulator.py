@@ -56,9 +56,9 @@ class BeamNGSimulator(DrivingSimulator):
 
     def __init__(
             self,
+            scenario_level,
             scenario_name='example', 
             scenario_path=None,
-            scenario_level='west_coast_usa', 
             host='localhost', 
             port=64256, 
             bng_path='D:\\BeamNG\\BeamNG.tech.v0.33.3.0', 

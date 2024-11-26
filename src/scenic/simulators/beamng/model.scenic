@@ -8,10 +8,16 @@ try:
 except ImportError as e:
     raise ImportError("To use the BeamNG simulator, please install the 'scenic' package with the 'beamng' extra") from e
 
+param beamng_map = "west_coast_usa"
+
 try:
-    simulator BeamNGSimulator()
+    simulator BeamNGSimulator(
+        scenario_level=globalParameters.beamng_map,
+    )
 except Error as e:
     raise Error("Failed to initialize BeamNG simulator") from e
+
+
 
 class BeamNGObject: # ScenarioObject in BeamNG
     oid: None
