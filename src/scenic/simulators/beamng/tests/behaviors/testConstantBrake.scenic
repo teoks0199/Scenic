@@ -6,6 +6,11 @@ behavior BrakeBehavior():
 
     while True:
         try:
+            print("Setting shift mode to realistic_manual_auto_clutch")
+            take SetShiftModeAction("realistic_manual_auto_clutch")
+            print("Setting gear to 1")
+            take SetGearAction(1)
+            print("Accelerating")
             do ConstantThrottleBehavior(0.5)
         interrupt when simulation().currentTime - last_stop > delay:
             print("Braking")
