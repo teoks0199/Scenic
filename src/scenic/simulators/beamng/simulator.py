@@ -93,7 +93,7 @@ class BeamNGSimulator(DrivingSimulator):
             scenario = Scenario(level=scenario_level, name=scenario_name) # arbitrary scenario
             ego = Vehicle("initial", model="etk800", color="White", license="initial_car")
             scenario.add_vehicle(
-                ego, pos=(-717, 101, 118), rot_quat=(0.0010, 0.1242, 0.9884, -0.0872)
+                ego, pos=(-717, 101, 0), rot_quat=(0.0010, 0.1242, 0.9884, -0.0872)
             )
             scenario.make(self.bng)
             self.scenario = scenario

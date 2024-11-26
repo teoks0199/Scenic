@@ -46,7 +46,7 @@ class SetSteerAction(Action):
 
     def applyTo(self, obj, sim):
         vehicle = sim.scenario.get_vehicle(obj.vid)
-        vehicle.control(steering=self.steering)
+        vehicle.control(steering=self.steer)
 
 class SetBrakeAction(Action):
     """Set the amount of brake.
@@ -100,7 +100,7 @@ class SetReverseAction(Action):
         if self.reverse:
             vehicle.control(gear=-1)
         else:
-            vehicle.control(gear=1)
+            vehicle.control(gear=2)
 
 class SetGearAction(Action):
     """Set the gear of a vehicle to shift to."""

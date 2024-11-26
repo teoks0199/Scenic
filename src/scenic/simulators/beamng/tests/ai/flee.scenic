@@ -1,15 +1,15 @@
 model scenic.simulators.beamng.model
 
 behavior FleeBehavior():
-    take AISetTargetAction(target_vid='target')
+    take AISetTargetAction(target_vid='chaser')
     take AISetFleeAction()
 
 behavior ChaseBehavior():
     take AISetTargetAction(target_vid='ego')
     take AISetChaseAction()
 
-target = new Vehicle at (-715, 121, 118),
-    with vid 'target',
+chaser = new Vehicle at (-715, 121, 118),
+    with vid 'chaser',
     with model 'etk800',
     with pos (-715, 121, 118),
     with rot_quat (0, 0, 0.3826834, 0.9238795),
