@@ -135,7 +135,8 @@ class SetPositionAction(Action):
 
     def applyTo(self, obj, sim):
         vechicle = sim.scenario.get_vehicle(obj.vid)
-        pos = utils.scenicToBeamNGVector(self.pos)
+        # pos = utils.scenicToBeamNGVector(self.pos)
+        pos = self.pos
         if self.yaw and self.pitch and self.roll:
             rot_quat = utils.euler_to_quaternion(self.yaw, self.pitch, self.roll)
             vechicle.teleport(pos, rot_quat)
