@@ -12,9 +12,7 @@ behavior ThrottleAndBrakeBehavior():
         print("Braking")
         do ConstantBrakeBehavior(1.0)
 
-ego = new Vehicle,
+ego = new Vehicle at (-717, 111, 108),
     with vid 'new',
     with model 'etk800',
-    with pos (-717, 111, 108),
-    with rot_quat (0, 0, 0.3826834, 0.9238795),
     with behavior ThrottleAndBrakeBehavior()

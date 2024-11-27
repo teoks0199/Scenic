@@ -17,8 +17,6 @@ try:
 except Error as e:
     raise Error("Failed to initialize BeamNG simulator") from e
 
-
-
 class BeamNGObject: # ScenarioObject in BeamNG
     oid: None
     name: None

@@ -19,10 +19,10 @@ behavior ConstantBrakeBehavior(x):
     while True:
         take SetThrottleAction(0), SetBrakeAction(x), SetReverseAction(False), SetHandBrakeAction(False)
 
-behavior TurnLeftBehavior():
+behavior SteerLeftBehavior():
     take SetSteerAction(-0.5)
 
-behavior TurnRightBehavior():
+behavior SteerRightBehavior():
     take SetSteerAction(0.5)
 
 behavior ReverseBehavior():
