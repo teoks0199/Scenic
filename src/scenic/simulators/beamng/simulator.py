@@ -92,7 +92,9 @@ class BeamNGSimulation(DrivingSimulation):
             vehicle = Vehicle(obj.vid, obj.model, license=obj.vid)
             p = utils.scenicToBeamNGVector(obj.position)
             print("spawned vehicle at", p)
-            self.scenario.add_vehicle(vehicle, pos=p)
+            rot_quat = utils.euler_to_quaternion(obj.yaw, obj.pitch, obj.roll)
+            print("rot quat", rot_quat)
+            self.scenario.add_vehicle(vehicle, pos=p, rot_quat=rot_quat)
             print("Added vehicle to scenario")
         except Exception as e:
             raise SimulationCreationError(f"Failed to spawn object {obj} in simulator") from e
