@@ -29,5 +29,5 @@ class BeamNGObject: # ScenarioObject in BeamNG
 class Vehicle(BeamNGObject):
     vid: None
     model: None
-    color: None
+    color: (1.0, 1.0, 1.0, 1.0)
     license: None

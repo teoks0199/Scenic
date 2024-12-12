@@ -89,7 +89,7 @@ class BeamNGSimulation(DrivingSimulation):
     def createObjectInSimulator(self, obj):
         # can only spawn vehicles for now
         try:
-            vehicle = Vehicle(obj.vid, obj.model, license=obj.vid)
+            vehicle = Vehicle(obj.vid, obj.model, license=obj.vid, color=obj.color)
             p = utils.scenicToBeamNGVector(obj.position)
             print("spawned vehicle at", p)
             rot_quat = utils.euler_to_quaternion(obj.yaw, obj.pitch, obj.roll)
@@ -139,7 +139,7 @@ class BeamNGSimulation(DrivingSimulation):
                     angularSpeed=angularSpeed,
                     angularVelocity=angularVelocity,
                 )
-        
+                
         return values
 
     def destroy(self):
